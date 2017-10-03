@@ -1,0 +1,14 @@
+[root]
+name = "cryptopals"
+version = "0.1.0"
+dependencies = [
+ "data-encoding 2.0.0-rc.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "data-encoding"
+version = "2.0.0-rc.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[metadata]
+"checksum data-encoding 2.0.0-rc.2 (registry+https://github.com/rust-lang/crates.io-index)" = "4f5a230e69215864942d635eb3d6f1f26cd244fdb04d2e12335c363b0b0c3fa7"
