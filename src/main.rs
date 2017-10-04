@@ -2,20 +2,15 @@ extern crate data_encoding;
 
 use data_encoding::{BASE64, HEXLOWER};
 
-const SET1CH1_TEST_IN: &str =
-"49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
-const SET1CH1_TEST_OUT: &str =
-"SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
-
 fn main() {
     set1ch1();
     set1ch2();
 }
 
 fn set1ch1() {
-    let b64 = hex_to_base64(SET1CH1_TEST_IN);
-    assert_eq!(b64, SET1CH1_TEST_OUT);
-    println!("{:?}", b64);
+    let input = "49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d";
+    let expected = "SSdtIGtpbGxpbmcgeW91ciBicmFpbiBsaWtlIGEgcG9pc29ub3VzIG11c2hyb29t";
+    assert_eq!(hex_to_base64(input), expected);
     println!("Success on Set 1 Challenge 1!");
 }
 
@@ -25,7 +20,10 @@ fn hex_to_base64(hex: &str) -> String {
 }
 
 fn set1ch2() {
-    assert_eq!(xor(hex_to_bytes("1c0111001f010100061a024b53535009181c"), hex_to_bytes("686974207468652062756c6c277320657965")), hex_to_bytes("746865206b696420646f6e277420706c6179"));
+    let input1 = "1c0111001f010100061a024b53535009181c";
+    let input2 = "686974207468652062756c6c277320657965"; 
+    let expected = "746865206b696420646f6e277420706c6179";
+    assert_eq!(xor(hex_to_bytes(input1), hex_to_bytes(input2)), hex_to_bytes(expected));
     println!("Success on Set 1 Challenge 2!");
 }
 
