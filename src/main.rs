@@ -12,9 +12,13 @@ fn main() {
 }
 
 fn set1ch1() {
-    println!("as hex: {:?}", SET1CH1_TEST_IN);
-    let bytes = HEXLOWER.decode(SET1CH1_TEST_IN.as_bytes()).unwrap();
-    println!("as bytes: {:?}", bytes);
-    let b64 = BASE64.encode(&bytes);
+    let b64 = hex_to_base64(SET1CH1_TEST_IN);
     assert_eq!(b64, SET1CH1_TEST_OUT);
+    println!("{:?}", b64);
+    println!("Success!");
+}
+
+fn hex_to_base64(hex: &str) -> String {
+    let bytes = HEXLOWER.decode(hex.as_bytes()).unwrap();
+    BASE64.encode(&bytes)
 }
