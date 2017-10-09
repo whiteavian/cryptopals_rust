@@ -1,10 +1,12 @@
 extern crate data_encoding;
 
 use data_encoding::{BASE64, HEXLOWER};
+use std::collections::BTreeMap;
 
 fn main() {
     set1ch1();
     set1ch2();
+    set1ch3();
 }
 
 fn set1ch1() {
@@ -25,6 +27,26 @@ fn set1ch2() {
     let expected = "746865206b696420646f6e277420706c6179";
     assert_eq!(xor(hex_to_bytes(input1), hex_to_bytes(input2)), hex_to_bytes(expected));
     println!("Success on Set 1 Challenge 2!");
+}
+
+fn set1ch3() {
+    let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+    let bytes = hex_to_bytes(input);
+    let mut char_counts:BTreeMap<u8, u8> = BTreeMap::new();
+
+    for byte in bytes {
+        if char_counts.contains_key(&byte) {
+            *char_counts.get_mut(&byte).unwrap() += 1;
+        }
+        else {
+            char_counts.insert(byte, 1);
+        }
+    }
+
+//    for byte in bytes {
+//        println!("{:?}", byte);
+////        println!("{:?} {:?}", key, char_counts[&key])
+//    }
 }
 
 fn xor(vec1 : Vec<u8>, vec2 : Vec<u8>) -> Vec<u8> {
