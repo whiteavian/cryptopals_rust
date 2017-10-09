@@ -39,6 +39,7 @@ fn set1ch3() {
     }
 }
 
+/// Return the frequency of each byte from a vector.
 fn byte_counts(bytes: Vec<u8>) -> BTreeMap<u8, u8> {
     let mut char_counts:BTreeMap<u8, u8> = BTreeMap::new();
 
@@ -49,6 +50,7 @@ fn byte_counts(bytes: Vec<u8>) -> BTreeMap<u8, u8> {
     char_counts
 }
 
+/// Xor two equivalent length vectors.
 fn xor(vec1 : Vec<u8>, vec2 : Vec<u8>) -> Vec<u8> {
     assert_eq!(vec1.len(), vec2.len());
     vec1.iter()
@@ -57,6 +59,7 @@ fn xor(vec1 : Vec<u8>, vec2 : Vec<u8>) -> Vec<u8> {
         .collect()
 }
 
+/// Return the raw bytes associate with a hex encoded string.
 fn hex_to_bytes(hex: &str) -> Vec<u8> {
     HEXLOWER.decode(hex.as_bytes()).unwrap()
 }
