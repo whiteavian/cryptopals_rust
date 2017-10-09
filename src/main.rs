@@ -32,16 +32,21 @@ fn set1ch2() {
 fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
     let bytes = hex_to_bytes(input);
+    let byte_counts = bytes_to_bytes_count(bytes);
+
+    for byte in byte_counts {
+        println!("{:?} {:?}", byte.0, byte.1);
+    }
+}
+
+fn byte_counts(bytes: Vec<u8>) -> BTreeMap<u8, u8> {
     let mut char_counts:BTreeMap<u8, u8> = BTreeMap::new();
 
     for byte in &bytes {
         *char_counts.entry(*byte).or_insert(1) += 1;
     }
 
-    for byte in bytes {
-        println!("{:?}", byte);
-//        println!("{:?} {:?}", key, char_counts[&key])
-    }
+    char_counts
 }
 
 fn xor(vec1 : Vec<u8>, vec2 : Vec<u8>) -> Vec<u8> {
