@@ -2,6 +2,7 @@ extern crate data_encoding;
 
 use data_encoding::{BASE64, HEXLOWER};
 use std::collections::BTreeMap;
+use std::iter::FromIterator;
 
 fn main() {
     set1ch1();
@@ -33,19 +34,26 @@ fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
     let bytes = hex_to_bytes(input);
 
-    for i in 0..200 {
-        let mut xor_result: Vec<u8> = Vec::new();
-        for byte in &bytes {
-            xor_result.push(byte ^ i);
-        }
-        let bc = byte_counts(xor_result);
+//    for i in 65..123 {
+//        let mut xor_result: Vec<u8> = Vec::new();
+//        for byte in &bytes {
+//            xor_result.push(byte ^ i);
+//        }
+//        let bc = byte_counts(xor_result);
+//
+//        println!("BEGIN NEW ATTEMPT");
+//        println!("{:?}", i);
+//        for byte in bc {
+//            println!("{:?} {:?}", byte.0 as char, byte.1);
+//        }
+//    }
 
-        println!("BEGIN NEW ATTEMPT");
-        println!("{:?}", i);
-        for byte in bc {
-            println!("{:?} {:?}", byte.0 as char, byte.1);
-        }
+    let mut v = Vec::from_iter(byte_counts(bytes));
+    v.sort_by(|a, b| b.1.cmp(&a.1));
+    for byte in v {
+        println!("{:?} {:?}", byte.0 as char, byte.1);
     }
+
 }
 
 /// Return the frequency of each byte from a vector.
