@@ -34,19 +34,14 @@ fn set1ch3() {
     let bytes = hex_to_bytes(input);
     let mut char_counts:BTreeMap<u8, u8> = BTreeMap::new();
 
-    for byte in bytes {
-        if char_counts.contains_key(&byte) {
-            *char_counts.get_mut(&byte).unwrap() += 1;
-        }
-        else {
-            char_counts.insert(byte, 1);
-        }
+    for byte in &bytes {
+        *char_counts.entry(*byte).or_insert(1) += 1;
     }
 
-//    for byte in bytes {
-//        println!("{:?}", byte);
-////        println!("{:?} {:?}", key, char_counts[&key])
-//    }
+    for byte in bytes {
+        println!("{:?}", byte);
+//        println!("{:?} {:?}", key, char_counts[&key])
+    }
 }
 
 fn xor(vec1 : Vec<u8>, vec2 : Vec<u8>) -> Vec<u8> {
