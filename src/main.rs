@@ -32,10 +32,19 @@ fn set1ch2() {
 fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
     let bytes = hex_to_bytes(input);
-    let byte_counts = byte_counts(bytes);
 
-    for byte in byte_counts {
-        println!("{:?} {:?}", byte.0 as char, byte.1);
+    for i in 0..200 {
+        let mut xor_result: Vec<u8> = Vec::new();
+        for byte in &bytes {
+            xor_result.push(byte ^ i);
+        }
+        let bc = byte_counts(xor_result);
+
+        println!("BEGIN NEW ATTEMPT");
+        println!("{:?}", i);
+        for byte in bc {
+            println!("{:?} {:?}", byte.0 as char, byte.1);
+        }
     }
 }
 
