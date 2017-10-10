@@ -60,6 +60,7 @@ fn set1ch4() {
     println!("{:?}", finalists);
 }
 
+/// Determine if the given byte vector has top characters corresponding to English.
 fn likely_english(input: &Vec<u8>) -> bool {
     let top_letters: HashSet<u8> =
         vec![" ", "e", "t", "a", "o", "i", "n", "s", "h", "r"]
