@@ -2,6 +2,7 @@ extern crate data_encoding;
 
 use data_encoding::{BASE64, HEXLOWER};
 use std::collections::BTreeMap;
+use std::collections::HashSet;
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
@@ -47,11 +48,32 @@ fn set1ch4() {
         .map(|l| l.expect("Could not parse line."))
         .collect();
 
+//    Any strings that have most common letters from the top 9 in English are finalists.
+    let mut finalists:Vec<String> = Vec::new();
+
     for input in inputs {
         let line_attempt = decode_by_space_most_common(&input);
-        let bc = sorted_byte_counts(&line_attempt);
-        println!("{:?}", bc);
+        if likely_english(&line_attempt) {
+            finalists.push(vec_to_string(line_attempt));
+        };
     }
+    println!("{:?}", finalists);
+}
+
+fn likely_english(input: &Vec<u8>) -> bool {
+    let top_letters: HashSet<u8> =
+        vec![" ", "e", "t", "a", "o", "i", "n", "s", "h", "r"]
+            .iter().map(|a| a.as_bytes()[0]).collect();
+
+    let bc = sorted_byte_counts(&input);
+    let mut top_letters_common = true;
+
+    for i in 1..5 {
+        if !top_letters.contains(&bc[i].0) {
+            top_letters_common = false;
+        }
+    }
+    top_letters_common
 }
 
 /// Return the human readable string from the given byte vector.
