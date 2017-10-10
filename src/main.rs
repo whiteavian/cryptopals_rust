@@ -2,12 +2,16 @@ extern crate data_encoding;
 
 use data_encoding::{BASE64, HEXLOWER};
 use std::collections::BTreeMap;
+use std::fs::File;
+use std::io::BufRead;
+use std::io::BufReader;
 use std::iter::FromIterator;
 
 fn main() {
     set1ch1();
     set1ch2();
     set1ch3();
+    set1ch4();
 }
 
 fn set1ch1() {
@@ -35,6 +39,19 @@ fn set1ch3() {
     println!("{:?}", decode_by_space_most_common(input));
 }
 
+fn set1ch4() {
+    let filename = "/home/whiteavian/Downloads/4.txt";
+    let file = File::open(filename).expect("File not found.");
+    let buf = BufReader::new(file);
+    let inputs:Vec<String> = buf.lines()
+        .map(|l| l.expect("Could not parse line."))
+        .collect();
+
+    for input in inputs {
+        println!("{:?}", decode_by_space_most_common(&input));
+    }
+}
+
 /// Decode a string by a single key xor assuming that the most common character corresponds to
 /// space.
 fn decode_by_space_most_common(input: &str) -> String {
@@ -50,7 +67,7 @@ fn decode_by_space_most_common(input: &str) -> String {
         xor_result.push(byte ^ key);
     }
 
-    String::from_utf8(xor_result).unwrap()
+    String::from_utf8(xor_result).unwrap_or(String::new())
 }
 
 /// Return possible keys if the most frequent letter is in the top 9.
