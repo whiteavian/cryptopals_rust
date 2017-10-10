@@ -36,7 +36,7 @@ fn set1ch2() {
 
 fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-    println!("{:?}", decode_by_space_most_common(input));
+    println!("{:?}", vec_to_string(decode_by_space_most_common(input)));
 }
 
 fn set1ch4() {
@@ -48,17 +48,23 @@ fn set1ch4() {
         .collect();
 
     for input in inputs {
-        println!("{:?}", decode_by_space_most_common(&input));
+        let line_attempt = decode_by_space_most_common(&input);
+        let bc = sorted_byte_counts(&line_attempt);
+        println!("{:?}", bc);
     }
+}
+
+/// Return the human readable string from the given byte vector.
+fn vec_to_string(input: Vec<u8>) -> String {
+    String::from_utf8(input).unwrap_or(String::new())
 }
 
 /// Decode a string by a single key xor assuming that the most common character corresponds to
 /// space.
-fn decode_by_space_most_common(input: &str) -> String {
+fn decode_by_space_most_common(input: &str) -> Vec<u8> {
     let bytes = hex_to_bytes(input);
 
-    let mut bytes_vector = Vec::from_iter(byte_counts(&bytes));
-    bytes_vector.sort_by(|a, b| b.1.cmp(&a.1));
+    let bytes_vector = sorted_byte_counts(&bytes);
     let top_letter = bytes_vector[0].0;
     let key = top_letter ^ " ".as_bytes()[0];
 
@@ -67,7 +73,7 @@ fn decode_by_space_most_common(input: &str) -> String {
         xor_result.push(byte ^ key);
     }
 
-    String::from_utf8(xor_result).unwrap_or(String::new())
+    xor_result
 }
 
 /// Return possible keys if the most frequent letter is in the top 9.
@@ -83,14 +89,17 @@ fn possible_keys(top_u8: &u8) -> Vec<u8> {
 }
 
 /// Return the frequency of each byte from a vector.
-fn byte_counts(bytes: &Vec<u8>) -> BTreeMap<u8, u8> {
+fn sorted_byte_counts(bytes: &Vec<u8>) -> Vec<(u8, u8)> {
     let mut char_counts:BTreeMap<u8, u8> = BTreeMap::new();
 
     for byte in bytes {
         *char_counts.entry(*byte).or_insert(1) += 1;
     }
 
-    char_counts
+    let mut bytes_vector = Vec::from_iter(char_counts);
+    bytes_vector.sort_by(|a, b| b.1.cmp(&a.1));
+
+    bytes_vector
 }
 
 /// Xor two equivalent length vectors.
