@@ -34,34 +34,33 @@ fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
     let bytes = hex_to_bytes(input);
 
-    let mut bytes_vector = Vec::from_iter(byte_counts(bytes));
+    let mut bytes_vector = Vec::from_iter(byte_counts(&bytes));
     bytes_vector.sort_by(|a, b| b.1.cmp(&a.1));
 
     let keys = possible_keys(&bytes_vector[0].0);
 
     for i in keys {
-        let mut xor_result: Vec<u8> = Vec::new();
-        for byte in &bytes_vector {
-            xor_result.push(byte.0 ^ i);
-        }
-        let bc = byte_counts(xor_result);
-
         println!("BEGIN NEW ATTEMPT");
         println!("{:?}", i);
+        let mut xor_result: Vec<u8> = Vec::new();
+        for byte in &bytes {
+            xor_result.push(byte ^ i);
+        }
+        for x in &xor_result {
+            println!("{:?}", *x as char);
+        }
+
+        let bc = byte_counts(&xor_result);
+
         for byte in bc {
             println!("{:?} {:?}", byte.0 as char, byte.1);
         }
     }
-
-    for byte in bytes_vector {
-        println!("{:?} {:?}", byte.0 as char, byte.1);
-    }
-
 }
 
 /// Return possible keys if the most frequent letter is in the top 9.
 fn possible_keys(top_u8: &u8) -> Vec<u8> {
-    let top_letters: Vec<&str> = vec!["e", "t", "a", "o", "i", "n", "s", "h", "r"];
+    let top_letters: Vec<&str> = vec![" ", "e", "t", "a", "o", "i", "n", "s", "h", "r"];
     let mut keys = Vec::new();
 
     for l in top_letters {
@@ -72,10 +71,10 @@ fn possible_keys(top_u8: &u8) -> Vec<u8> {
 }
 
 /// Return the frequency of each byte from a vector.
-fn byte_counts(bytes: Vec<u8>) -> BTreeMap<u8, u8> {
+fn byte_counts(bytes: &Vec<u8>) -> BTreeMap<u8, u8> {
     let mut char_counts:BTreeMap<u8, u8> = BTreeMap::new();
 
-    for byte in &bytes {
+    for byte in bytes {
         *char_counts.entry(*byte).or_insert(1) += 1;
     }
 
