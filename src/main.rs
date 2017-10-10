@@ -13,6 +13,7 @@ fn main() {
     set1ch2();
     set1ch3();
     set1ch4();
+    set1ch5();
 }
 
 fn set1ch1() {
@@ -58,6 +59,28 @@ fn set1ch4() {
         };
     }
     println!("{:?}", finalists);
+}
+
+fn set1ch5() {
+    let input =
+        "Burning 'em, if you ain't quick and nimble
+I go crazy when I hear a cymbal";
+    let key = "ICE";
+    let result = repeat_xor_encrypt(input, key);
+}
+
+/// Use repeating-key XOR to encrypt the given string with the given key.
+fn repeat_xor_encrypt(input: &str, key: &str) -> Vec<u8> {
+    let length = input.as_bytes().len();
+    let repeat = key.as_bytes().iter().cycle().take(length).collect::<Vec<&u8>>();
+
+//    TODO figure out how to fix the reference type here.
+    let mut deref_repeat = Vec::new();
+    for entry in repeat {
+        deref_repeat.push(*entry);
+    }
+
+    xor(input.as_bytes().to_vec(), deref_repeat)
 }
 
 /// Determine if the given byte vector has top characters corresponding to English.
