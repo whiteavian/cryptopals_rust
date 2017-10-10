@@ -32,30 +32,25 @@ fn set1ch2() {
 
 fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
+    println!("{:?}", decode_by_space_most_common(input));
+}
+
+/// Decode a string by a single key xor assuming that the most common character corresponds to
+/// space.
+fn decode_by_space_most_common(input: &str) -> String {
     let bytes = hex_to_bytes(input);
 
     let mut bytes_vector = Vec::from_iter(byte_counts(&bytes));
     bytes_vector.sort_by(|a, b| b.1.cmp(&a.1));
+    let top_letter = bytes_vector[0].0;
+    let key = top_letter ^ " ".as_bytes()[0];
 
-    let keys = possible_keys(&bytes_vector[0].0);
-
-    for i in keys {
-        println!("BEGIN NEW ATTEMPT");
-        println!("{:?}", i);
-        let mut xor_result: Vec<u8> = Vec::new();
-        for byte in &bytes {
-            xor_result.push(byte ^ i);
-        }
-        for x in &xor_result {
-            println!("{:?}", *x as char);
-        }
-
-        let bc = byte_counts(&xor_result);
-
-        for byte in bc {
-            println!("{:?} {:?}", byte.0 as char, byte.1);
-        }
+    let mut xor_result = Vec::new();
+    for byte in &bytes {
+        xor_result.push(byte ^ key);
     }
+
+    String::from_utf8(xor_result).unwrap()
 }
 
 /// Return possible keys if the most frequent letter is in the top 9.
