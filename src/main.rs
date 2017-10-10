@@ -67,6 +67,11 @@ fn set1ch5() {
 I go crazy when I hear a cymbal";
     let key = "ICE";
     let result = repeat_xor_encrypt(input, key);
+
+    let expected = "0b3637272a2b2e63622c2e69692a23693a2a3c6324202d623d63343c2a26226324272765272a282b2f20430a652e2c652a3124333a653e2b2027630c692b20283165286326302e27282f";
+
+    assert_eq!(result, hex_to_bytes(expected));
+    println!("Success on Set 1 Challenge 5!");
 }
 
 /// Use repeating-key XOR to encrypt the given string with the given key.
@@ -120,18 +125,6 @@ fn decode_by_space_most_common(input: &str) -> Vec<u8> {
     }
 
     xor_result
-}
-
-/// Return possible keys if the most frequent letter is in the top 9.
-fn possible_keys(top_u8: &u8) -> Vec<u8> {
-    let top_letters: Vec<&str> = vec![" ", "e", "t", "a", "o", "i", "n", "s", "h", "r"];
-    let mut keys = Vec::new();
-
-    for l in top_letters {
-        keys.push(top_u8 ^ l.as_bytes()[0]);
-    }
-
-    keys
 }
 
 /// Return the frequency of each byte from a vector.
