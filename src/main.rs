@@ -1,11 +1,15 @@
 extern crate data_encoding;
+extern crate hamming;
 
 use data_encoding::{BASE64, HEXLOWER};
+use hamming::distance;
+
 use std::collections::BTreeMap;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::BufRead;
 use std::io::BufReader;
+use std::io::Read;
 use std::iter::FromIterator;
 
 fn main() {
@@ -14,6 +18,7 @@ fn main() {
     set1ch3();
     set1ch4();
     set1ch5();
+    set1ch6();
 }
 
 fn set1ch1() {
@@ -30,7 +35,7 @@ fn hex_to_base64(hex: &str) -> String {
 
 fn set1ch2() {
     let input1 = "1c0111001f010100061a024b53535009181c";
-    let input2 = "686974207468652062756c6c277320657965"; 
+    let input2 = "686974207468652062756c6c277320657965";
     let expected = "746865206b696420646f6e277420706c6179";
     assert_eq!(xor(hex_to_bytes(input1), hex_to_bytes(input2)), hex_to_bytes(expected));
     println!("Success on Set 1 Challenge 2!");
@@ -73,6 +78,38 @@ I go crazy when I hear a cymbal";
 
     assert_eq!(result, hex_to_bytes(expected));
     println!("Success on Set 1 Challenge 5!");
+}
+
+fn set1ch6() {
+    let in1 = "this is a test";
+    let in2 = "wokka wokka!!!";
+    println!("{:?}", distance(in1.as_bytes(), in2.as_bytes()));
+
+    let filename = "/home/whiteavian/Downloads/6.txt";
+    let mut file = File::open(filename).expect("File not found.");
+    let mut contents = String::new();
+
+    file.read_to_string(&mut contents).expect("Could not read file.");
+    println!("{:?}", contents);
+    let input_bytes = BASE64.decode(contents.as_bytes()).unwrap();
+
+    let mut key_length_distances = BTreeMap::new();
+
+    for i in 2..41 {
+        let mut first:Vec<u8> = Vec::new();
+        let mut second:Vec<u8> = Vec::new();
+
+        for j in 0..i {
+            first.push(input_bytes[j]);
+        }
+        for k in i..2*i {
+            second.push(input_bytes[k]);
+        }
+
+        key_length_distances.insert(i, distance(&first, &second));
+    }
+
+    println!("{:?}", key_length_distances);
 }
 
 /// Use repeating-key XOR to encrypt the given string with the given key.

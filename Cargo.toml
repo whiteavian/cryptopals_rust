@@ -5,3 +5,4 @@ authors = ["Laura White-Avian <whiteavian@noreply.github.com>"]
 
 [dependencies]
 data-encoding = "2.0.0-rc.2"
+hamming = "0.1.3"
