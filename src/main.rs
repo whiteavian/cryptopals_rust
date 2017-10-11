@@ -86,12 +86,16 @@ fn set1ch6() {
     println!("{:?}", distance(in1.as_bytes(), in2.as_bytes()));
 
     let filename = "/home/whiteavian/Downloads/6.txt";
-    let mut file = File::open(filename).expect("File not found.");
-    let mut contents = String::new();
+    let file = File::open(filename).expect("File not found.");
+    let buf = BufReader::new(file);
+    let inputs:Vec<String> = buf.lines()
+        .map(|l| l.expect("Could not parse line."))
+        .collect();
 
-    file.read_to_string(&mut contents).expect("Could not read file.");
-    println!("{:?}", contents);
-    let input_bytes = BASE64.decode(contents.as_bytes()).unwrap();
+    let mut input_bytes = Vec::new();
+    for line in inputs {
+        input_bytes.append(&mut BASE64.decode(line.as_bytes()).unwrap());
+    }
 
     let mut key_length_distances = BTreeMap::new();
 
