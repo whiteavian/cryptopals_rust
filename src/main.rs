@@ -100,17 +100,32 @@ fn set1ch6() {
     let mut key_length_distances = BTreeMap::new();
 
     for i in 2..41 {
-        let mut first:Vec<u8> = Vec::new();
-        let mut second:Vec<u8> = Vec::new();
+        let mut first: Vec<u8> = Vec::new();
+        let mut second: Vec<u8> = Vec::new();
+        let mut third: Vec<u8> = Vec::new();
+        let mut fourth: Vec<u8> = Vec::new();
 
         for j in 0..i {
             first.push(input_bytes[j]);
         }
-        for k in i..2*i {
+        for k in i..2 * i {
             second.push(input_bytes[k]);
         }
+        for j in 2 * i..3 * i {
+            third.push(input_bytes[j]);
+        }
+        for k in 3 * i..4 * i {
+            fourth.push(input_bytes[k]);
+        }
 
-        key_length_distances.insert(i, distance(&first, &second));
+        let one_two = distance(&first, &second);
+        let two_three = distance(&second, &third);
+        let three_four = distance(&third, &fourth);
+        let four_one = distance(&fourth, &first);
+
+        let average = (one_two + two_three + three_four + four_one) /((i as u64) * 4);
+
+        key_length_distances.insert(i, average);
     }
 
     println!("{:?}", key_length_distances);
