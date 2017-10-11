@@ -99,36 +99,37 @@ fn set1ch6() {
 
     let mut key_length_distances = BTreeMap::new();
 
+    let max_average = 4;
+
     for i in 2..41 {
-        let mut first: Vec<u8> = Vec::new();
-        let mut second: Vec<u8> = Vec::new();
-        let mut third: Vec<u8> = Vec::new();
-        let mut fourth: Vec<u8> = Vec::new();
+        let mut first: Vec<Vec<u8>> = Vec::new();
 
-        for j in 0..i {
-            first.push(input_bytes[j]);
-        }
-        for k in i..2 * i {
-            second.push(input_bytes[k]);
-        }
-        for j in 2 * i..3 * i {
-            third.push(input_bytes[j]);
-        }
-        for k in 3 * i..4 * i {
-            fourth.push(input_bytes[k]);
+        for m in 0..max_average {
+            for j in m * i..(m + 1) * i {
+                if (first.len() < m + 1) {
+                    first.push(Vec::new());
+                }
+                first[m].push(input_bytes[j]);
+            }
         }
 
-        let one_two = distance(&first, &second);
-        let two_three = distance(&second, &third);
-        let three_four = distance(&third, &fourth);
-        let four_one = distance(&fourth, &first);
-
-        let average = (one_two + two_three + three_four + four_one) /((i as u64) * 4);
+        let mut sum = 0;
+        for m in 0..max_average {
+            if m == max_average - 1 {
+                sum += distance(&first[m], &first[0]);
+            } else {
+                sum += distance(&first[m], &first[m + 1]);
+            }
+        }
+        let average = sum /((i as u64) * max_average as u64);
 
         key_length_distances.insert(i, average);
     }
 
-    println!("{:?}", key_length_distances);
+
+    let mut foo = Vec::from_iter(key_length_distances);
+    foo.sort_by(|a, b| a.1.cmp(&b.1));
+    println!("{:?}", foo);
 }
 
 /// Use repeating-key XOR to encrypt the given string with the given key.
