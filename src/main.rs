@@ -106,7 +106,7 @@ fn set1ch6() {
 
         for m in 0..max_average {
             for j in m * i..(m + 1) * i {
-                if (first.len() < m + 1) {
+                if first.len() < m + 1 {
                     first.push(Vec::new());
                 }
                 first[m].push(input_bytes[j]);
@@ -127,9 +127,27 @@ fn set1ch6() {
     }
 
 
-    let mut foo = Vec::from_iter(key_length_distances);
-    foo.sort_by(|a, b| a.1.cmp(&b.1));
-    println!("{:?}", foo);
+    let mut ordered_key_lengths = Vec::from_iter(key_length_distances);
+    ordered_key_lengths.sort_by(|a, b| a.1.cmp(&b.1));
+
+    let mut potential_key_lengths = Vec::new();
+    let mut min_length = ordered_key_lengths[0].0 as u64;
+
+    for k in ordered_key_lengths {
+        let key_length = k.0;
+        let offset = k.1;
+
+        if offset < min_length {
+            min_length = offset;
+            potential_key_lengths.clear();
+            potential_key_lengths.push(key_length);
+        } else if offset == min_length {
+            potential_key_lengths.push(key_length);
+        }
+
+    }
+
+    println!("{:?}", potential_key_lengths);
 }
 
 /// Use repeating-key XOR to encrypt the given string with the given key.
