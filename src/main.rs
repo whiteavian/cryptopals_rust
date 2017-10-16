@@ -147,6 +147,15 @@ fn set1ch6() {
 
     }
 
+    let mut transpositions = Vec::new();
+
+    for key_length in potential_key_lengths {
+        for i in 0..key_length {
+            transpositions.push(Vec::new());
+
+        }
+    }
+
     println!("{:?}", potential_key_lengths);
 }
 
