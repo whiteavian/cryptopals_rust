@@ -147,22 +147,29 @@ fn set1ch6() {
 
     }
 
-    let mut transpositions = Vec::new();
+    let transpositions = get_transpositions(potential_key_lengths, &input_bytes);
+
+//    println!("{:?}", potential_key_lengths);
+}
+
+fn get_transpositions(potential_key_lengths: Vec<usize>, input_bytes: &Vec<u8>) -> Vec<Vec<u8>> {
+    let mut transpositions: Vec<Vec<u8>> = Vec::new();
 
     for key_length in potential_key_lengths {
-        for i in 0..key_length {
-            transpositions.push("foo");
-
+        for block_length in 0..key_length {
+            for i in 0..block_length {
+                transpositions.push(ith_block_byte(block_length, i, &input_bytes));
+            }
         }
     }
 
-//    println!("{:?}", potential_key_lengths);
+    transpositions
 }
 
 // Question: to what extent should we confirm our assumptions with control flows or assertions?
 // For example, in this case we require that block_length < string.len() and i < block_length.
 /// Return a string of ith items from block_length sized bytes from string.
-fn ith_block_byte(block_length: usize, i: usize, vec: Vec<u8>) -> Vec<u8> {
+fn ith_block_byte(block_length: usize, i: usize, vec: &Vec<u8>) -> Vec<u8> {
     let counter_max = vec.len() / block_length;
     let mut new_vec = Vec::new();
     let mut index;
