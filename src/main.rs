@@ -151,12 +151,28 @@ fn set1ch6() {
 
     for key_length in potential_key_lengths {
         for i in 0..key_length {
-            transpositions.push(Vec::new());
+            transpositions.push("foo");
 
         }
     }
 
-    println!("{:?}", potential_key_lengths);
+//    println!("{:?}", potential_key_lengths);
+}
+
+// Question: to what extent should we confirm our assumptions with control flows or assertions?
+// For example, in this case we require that block_length < string.len() and i < block_length.
+/// Return a string of ith items from block_length sized bytes from string.
+fn ith_block_byte(block_length: usize, i: usize, vec: Vec<u8>) -> Vec<u8> {
+    let counter_max = vec.len() / block_length;
+    let mut new_vec = Vec::new();
+    let mut index;
+
+    for j in 0..counter_max {
+        index = j * block_length + i;
+        new_vec.push(vec[index]);
+    }
+
+    new_vec
 }
 
 /// Use repeating-key XOR to encrypt the given string with the given key.
