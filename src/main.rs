@@ -152,6 +152,7 @@ fn set1ch6() {
 //    println!("{:?}", potential_key_lengths);
 }
 
+/// For the potential_key_lengths, get all possible transpositions of the input_bytes.
 fn get_transpositions(potential_key_lengths: Vec<usize>, input_bytes: &Vec<u8>) -> Vec<Vec<u8>> {
     let mut transpositions: Vec<Vec<u8>> = Vec::new();
 
