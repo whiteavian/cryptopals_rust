@@ -161,6 +161,18 @@ fn set1ch6() {
     }
 
     let transpositions = get_transpositions(potential_key_lengths, &input_bytes);
+    let mut possible_keys: HashSet<Vec<u8>> = HashSet::new();
+
+    for k in transpositions.keys() {
+        possible_keys[k] = Vec::new();
+
+        for input in transpositions[k] {
+            let line_attempt = decode_by_space_most_common(input);
+            if likely_english(&line_attempt) {
+                possible_keys[k].push(vec_to_string(line_attempt));
+            };
+        }
+    }
 
     let finalists = decode_space_most_common_selection(transpositions);
     println!("{:?}", finalists);
@@ -172,13 +184,15 @@ fn set1ch6() {
 }
 
 /// For the potential_key_lengths, get all possible transpositions of the input_bytes.
-fn get_transpositions(potential_key_lengths: Vec<usize>, input_bytes: &Vec<u8>) -> Vec<Vec<u8>> {
-    let mut transpositions: Vec<Vec<u8>> = Vec::new();
+fn get_transpositions(potential_key_lengths: Vec<usize>, input_bytes: &Vec<u8>) -> HashSet<Vec<u8>> {
+    let mut transpositions: HashSet<Vec<u8>> = HashSet::new();
 
     for key_length in potential_key_lengths {
+        transpositions[key_length] = Vec::new();
+
         for block_length in 0..key_length {
             for i in 0..block_length {
-                transpositions.push(ith_block_byte(block_length, i, &input_bytes));
+                transpositions[key_length].push(ith_block_byte(block_length, i, &input_bytes));
             }
         }
     }
@@ -238,13 +252,17 @@ fn vec_to_string(input: Vec<u8>) -> String {
     String::from_utf8(input).unwrap_or(String::new())
 }
 
+fn key_from_space_most_common(bytes: &Vec<u8>) -> u8 {
+    let bytes_vector = sorted_byte_counts(&bytes);
+    let top_letter = bytes_vector[0].0;
+
+    top_letter ^ " ".as_bytes()[0]
+}
+
 /// Decode a string's byte Vector by a single key xor assuming that the most common character
 /// corresponds to a space.
 fn decode_by_space_most_common(bytes: Vec<u8>) -> Vec<u8> {
-
-    let bytes_vector = sorted_byte_counts(&bytes);
-    let top_letter = bytes_vector[0].0;
-    let key = top_letter ^ " ".as_bytes()[0];
+    let key = key_from_space_most_common(&bytes);
 
     let mut xor_result = Vec::new();
     for byte in &bytes {
