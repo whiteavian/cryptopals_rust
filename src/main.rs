@@ -5,6 +5,7 @@ use data_encoding::{BASE64, HEXLOWER};
 use hamming::distance;
 
 use std::collections::BTreeMap;
+use std::collections::HashMap;
 use std::collections::HashSet;
 use std::fs::File;
 use std::io::BufRead;
@@ -43,7 +44,7 @@ fn set1ch2() {
 
 fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-    println!("{:?}", vec_to_string(decode_by_space_most_common(hex_to_bytes(input))));
+    println!("{:?}", vec_to_string(decode_by_space_most_common(&hex_to_bytes(input))));
 }
 
 fn set1ch4() {
@@ -70,7 +71,7 @@ fn decode_space_most_common_selection(inputs: Vec<Vec<u8>>) -> Vec<String> {
     let mut finalists:Vec<String> = Vec::new();
 
     for input in inputs {
-        let line_attempt = decode_by_space_most_common(input);
+        let line_attempt = decode_by_space_most_common(&input);
         if likely_english(&line_attempt) {
             finalists.push(vec_to_string(line_attempt));
         };
@@ -160,22 +161,22 @@ fn set1ch6() {
 
     }
 
-    let transpositions = get_transpositions(potential_key_lengths, &input_bytes);
-    let mut possible_keys: HashSet<Vec<u8>> = HashSet::new();
+    let transpositions = get_transpositions(&potential_key_lengths, &input_bytes);
+    let mut possible_keys: HashMap<&usize, Vec<u8>> = HashMap::new();
 
     for k in transpositions.keys() {
-        possible_keys[k] = Vec::new();
+        possible_keys.insert(k, Vec::new());
 
-        for input in transpositions[k] {
-            let line_attempt = decode_by_space_most_common(input);
+        for block in transpositions.get(k).unwrap() {
+            let line_attempt = decode_by_space_most_common(block);
             if likely_english(&line_attempt) {
-                possible_keys[k].push(vec_to_string(line_attempt));
+                possible_keys.get_mut(k).unwrap().push(key_from_space_most_common(block));
             };
         }
     }
 
-    let finalists = decode_space_most_common_selection(transpositions);
-    println!("{:?}", finalists);
+//    let finalists = decode_space_most_common_selection(transpositions);
+//    println!("{:?}", finalists);
 //    for t in transpositions {
 //        if likely_english(t) {
 //            println!("{:?}", t);
@@ -184,15 +185,15 @@ fn set1ch6() {
 }
 
 /// For the potential_key_lengths, get all possible transpositions of the input_bytes.
-fn get_transpositions(potential_key_lengths: Vec<usize>, input_bytes: &Vec<u8>) -> HashSet<Vec<u8>> {
-    let mut transpositions: HashSet<Vec<u8>> = HashSet::new();
+fn get_transpositions(potential_key_lengths: &Vec<usize>, input_bytes: &Vec<u8>) -> HashMap<usize, Vec<Vec<u8>>> {
+    let mut transpositions = HashMap::new();
 
     for key_length in potential_key_lengths {
-        transpositions[key_length] = Vec::new();
+        transpositions.insert(*key_length, Vec::new());
 
-        for block_length in 0..key_length {
+        for block_length in 0..*key_length {
             for i in 0..block_length {
-                transpositions[key_length].push(ith_block_byte(block_length, i, &input_bytes));
+                transpositions.get_mut(key_length).unwrap().push(ith_block_byte(block_length, i, &input_bytes));
             }
         }
     }
@@ -252,6 +253,7 @@ fn vec_to_string(input: Vec<u8>) -> String {
     String::from_utf8(input).unwrap_or(String::new())
 }
 
+/// Assuming space is the most common letter, return the decryption key.
 fn key_from_space_most_common(bytes: &Vec<u8>) -> u8 {
     let bytes_vector = sorted_byte_counts(&bytes);
     let top_letter = bytes_vector[0].0;
@@ -261,11 +263,11 @@ fn key_from_space_most_common(bytes: &Vec<u8>) -> u8 {
 
 /// Decode a string's byte Vector by a single key xor assuming that the most common character
 /// corresponds to a space.
-fn decode_by_space_most_common(bytes: Vec<u8>) -> Vec<u8> {
+fn decode_by_space_most_common(bytes: &Vec<u8>) -> Vec<u8> {
     let key = key_from_space_most_common(&bytes);
 
     let mut xor_result = Vec::new();
-    for byte in &bytes {
+    for byte in bytes {
         xor_result.push(byte ^ key);
     }
 
