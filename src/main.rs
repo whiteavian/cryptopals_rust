@@ -43,27 +43,38 @@ fn set1ch2() {
 
 fn set1ch3() {
     let input= "1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736";
-    println!("{:?}", vec_to_string(decode_by_space_most_common(input)));
+    println!("{:?}", vec_to_string(decode_by_space_most_common(hex_to_bytes(input))));
 }
 
 fn set1ch4() {
     let filename = "/home/whiteavian/Downloads/4.txt";
     let file = File::open(filename).expect("File not found.");
     let buf = BufReader::new(file);
-    let inputs:Vec<String> = buf.lines()
+    let inputs: Vec<String> = buf.lines()
         .map(|l| l.expect("Could not parse line."))
         .collect();
 
+    let mut input_bytes: Vec<Vec<u8>> = Vec::new();
+
+    for input in inputs {
+        input_bytes.push(hex_to_bytes(&input));
+    }
+
+    let finalists = decode_space_most_common_selection(input_bytes);
+    println!("{:?}", finalists);
+}
+
+/// Given a vector of strings as vector bytes, return decodings of those potentially in English.
+fn decode_space_most_common_selection(inputs: Vec<Vec<u8>>) {
 //    Any strings that have most common letters from the top 9 in English are finalists.
     let mut finalists:Vec<String> = Vec::new();
 
     for input in inputs {
-        let line_attempt = decode_by_space_most_common(&input);
+        let line_attempt = decode_by_space_most_common(input);
         if likely_english(&line_attempt) {
             finalists.push(vec_to_string(line_attempt));
         };
     }
-    println!("{:?}", finalists);
 }
 
 fn set1ch5() {
@@ -149,7 +160,13 @@ fn set1ch6() {
 
     let transpositions = get_transpositions(potential_key_lengths, &input_bytes);
 
-//    println!("{:?}", potential_key_lengths);
+    let finalists = decode_space_most_common_selection(transpositions);
+    println!("{:?}", finalists);
+//    for t in transpositions {
+//        if likely_english(t) {
+//            println!("{:?}", t);
+//        }
+//    }
 }
 
 /// For the potential_key_lengths, get all possible transpositions of the input_bytes.
@@ -219,10 +236,9 @@ fn vec_to_string(input: Vec<u8>) -> String {
     String::from_utf8(input).unwrap_or(String::new())
 }
 
-/// Decode a string by a single key xor assuming that the most common character corresponds to
-/// space.
-fn decode_by_space_most_common(input: &str) -> Vec<u8> {
-    let bytes = hex_to_bytes(input);
+/// Decode a string's byte Vector by a single key xor assuming that the most common character
+/// corresponds to a space.
+fn decode_by_space_most_common(bytes: Vec<u8>) -> Vec<u8> {
 
     let bytes_vector = sorted_byte_counts(&bytes);
     let top_letter = bytes_vector[0].0;
