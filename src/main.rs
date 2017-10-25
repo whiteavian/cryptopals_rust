@@ -65,7 +65,7 @@ fn set1ch4() {
 }
 
 /// Given a vector of strings as vector bytes, return decodings of those potentially in English.
-fn decode_space_most_common_selection(inputs: Vec<Vec<u8>>) {
+fn decode_space_most_common_selection(inputs: Vec<Vec<u8>>) -> Vec<String> {
 //    Any strings that have most common letters from the top 9 in English are finalists.
     let mut finalists:Vec<String> = Vec::new();
 
@@ -75,6 +75,8 @@ fn decode_space_most_common_selection(inputs: Vec<Vec<u8>>) {
             finalists.push(vec_to_string(line_attempt));
         };
     }
+
+    finalists
 }
 
 fn set1ch5() {
